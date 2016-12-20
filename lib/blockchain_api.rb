@@ -8,6 +8,9 @@ require_relative 'transaction.rb'
 class BlockchainAPI
     @@api_url = "blockchain.info"
 
+    # In the API, all values are multiplied by this value.
+    @@multiplier = 0.00000001
+
     def latestBlock
         map = JSON.parse(Net::HTTP.get(@@api_url, "/latestblock"))
         Block.new(map["hash"],
@@ -31,8 +34,8 @@ class BlockchainAPI
 
     private
     def parseTransaction(hash)
-        inputs = hash["inputs"].map {|inp| inp["prev_out"]["value"]}
-        outputs = hash["out"].map {|out| out["value"]}
+        inputs = hash["inputs"].map {|inp| inp["prev_out"]["value"] * @@multiplier}
+        outputs = hash["out"].map {|out| out["value"] * @@multiplier}
         Transaction.new(hash["hash"],
                         hash["index"],
                         Time.at(hash["time"]).to_datetime,
