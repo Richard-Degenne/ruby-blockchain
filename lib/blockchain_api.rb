@@ -5,12 +5,26 @@ require 'json'
 require_relative 'block.rb'
 require_relative 'transaction.rb'
 
+##
+# This class connects to the <code>blockchain.info</code> API to fetch
+# data about the blockchain.
+#
 class BlockchainAPI
+    ##
+    # The URL of the blockchain.info API.
+    #
     @@api_url = "blockchain.info"
 
+    ##
     # In the API, all values are multiplied by this value.
+    #
     @@multiplier = 0.00000001
 
+    ##
+    # Fetches the last block from the blockchain.
+    #
+    # @return   A Block containing the requested info
+    #
     def latestBlock
         map = JSON.parse(Net::HTTP.get(@@api_url, "/latestblock"))
         Block.new(map["hash"],
@@ -18,11 +32,21 @@ class BlockchainAPI
                   map["txIndexes"])
     end
 
+    ##
+    # Fetches the last transactions.
+    # What it really does is that it gets all the unconfirmed transactions.
+    #
+    # @return   A list of the requested Transactions
+    #
     def latestTransactions
         map = JSON.parse(Net::HTTP.get(@@api_url, "/unconfirmed-transactions?format=json"))
         map["txs"].map {|hash| parseTransaction(hash)}
     end
 
+    ##
+    # Fetches a transaction given by its index.
+    #
+    # @return   A Transaction containing the requested info
     def transactionByIndex(index)
         begin
             map = JSON.parse(Net::HTTP.get(@@api_url, "/tx-index/#{index}?format=json"))
