@@ -12,3 +12,23 @@ RSpec.describe BlockchainAPI, "#latestBlock" do
         end
     end
 end
+
+RSpec.describe BlockchainAPI, "#transactionByIndex" do
+    context "with a valid parameter" do
+        it "returns a valid Transaction" do
+            api = BlockchainAPI.new
+            tx = api.transactionByIndex(200453276) # See https://blockchain.info/tx-index/200453276?format=json
+
+            expect(tx.hash).not_to eq ""
+            expect(tx.total_input).to eq 3178693
+            expect(tx.total_output).to eq 3138693
+        end
+    end
+
+    context "with an invalid parameter" do
+        it "raises an ArgumentError" do
+            api = BlockchainAPI.new
+            expect {api.transactionByIndex('invalid_parameter')}.to raise_error(ArgumentError)
+        end
+    end
+end
