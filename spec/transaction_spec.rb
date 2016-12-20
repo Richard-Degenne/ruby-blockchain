@@ -48,3 +48,16 @@ RSpec.describe Transaction, "#total_output" do
         end
     end
 end
+
+RSpec.describe Transaction, "#fees" do
+    context "when called" do
+        it "returns the correct fees" do
+            tx = Transaction.new("57b2bc1d95d46c824e5c4dec1d6a81c8b8e58bcc3fdcd81e546fe24a302c07d1",
+                                 200455703,
+                                 Time.at(1482230001).to_datetime,
+                                 [3000],
+                                 [1000, 1500])
+            expect(tx.fees).to eq 500
+        end
+    end
+end

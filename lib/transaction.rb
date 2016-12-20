@@ -29,4 +29,8 @@ class Transaction
     def total_output
         @outputs.inject(:+)
     end
+
+    def fees
+        total_input - total_output
+    end
 end
