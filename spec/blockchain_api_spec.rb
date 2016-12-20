@@ -31,8 +31,8 @@ RSpec.describe BlockchainAPI, "#transactionByIndex" do
             tx = api.transactionByIndex(200453276) # See https://blockchain.info/tx-index/200453276?format=json
 
             expect(tx.hash).not_to eq ""
-            expect(tx.total_input).to eq 3178693
-            expect(tx.total_output).to eq 3138693
+            expect(tx.total_input).to eq 0.03178693
+            expect(tx.total_output).to eq 0.03138693
         end
     end
 
