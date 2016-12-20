@@ -13,6 +13,17 @@ RSpec.describe BlockchainAPI, "#latestBlock" do
     end
 end
 
+RSpec.describe BlockchainAPI, "#latestTransaction" do
+    context "when connected" do
+        it "returns a valid list of Transactions" do
+            api = BlockchainAPI.new
+            txs = api.latestTransactions
+
+            expect(txs).to respond_to("each")
+        end
+    end
+end
+
 RSpec.describe BlockchainAPI, "#transactionByIndex" do
     context "with a valid parameter" do
         it "returns a valid Transaction" do

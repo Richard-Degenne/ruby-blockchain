@@ -15,17 +15,27 @@ class BlockchainAPI
                   map["txIndexes"])
     end
 
+    def latestTransactions
+        map = JSON.parse(Net::HTTP.get(@@api_url, "/unconfirmed-transactions?format=json"))
+        map["txs"].map {|hash| parseTransaction(hash)}
+    end
+
     def transactionByIndex(index)
         begin
             map = JSON.parse(Net::HTTP.get(@@api_url, "/tx-index/#{index}?format=json"))
-            inputs = map["inputs"].map {|inp| inp["prev_out"]["value"]}
-            outputs = map["out"].map {|out| out["value"]}
         rescue
             raise ArgumentError, 'Invalid transaction index'
         end
-        Transaction.new(map["hash"],
-                        map["index"],
-                        Time.at(map["time"]).to_datetime,
+        parseTransaction(map)
+    end
+
+    private
+    def parseTransaction(hash)
+        inputs = hash["inputs"].map {|inp| inp["prev_out"]["value"]}
+        outputs = hash["out"].map {|out| out["value"]}
+        Transaction.new(hash["hash"],
+                        hash["index"],
+                        Time.at(hash["time"]).to_datetime,
                         inputs,
                         outputs)
     end
@@ -34,6 +44,8 @@ end
 if __FILE__ == $0
     api = BlockchainAPI.new
     puts api.latestBlock
+
+    api.latestTransactions.each {|tx| puts tx}
 
     tx = api.transactionByIndex(200453276)
     puts tx.total_input
